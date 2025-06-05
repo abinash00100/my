@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Task Planner - June 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .controls {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .filter-group label {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .filter-group select {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            background: white;
+            font-size: 14px;
+        }
+        
+        .calendar-container {
+            display: flex;
+            flex-direction: column;
+            margin: 30px;
+        }
+        
+        .calendar-header-row {
+            display: flex;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
+        }
+        
+        .calendar-header-cell {
+            flex: 1;
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 14px;
+            min-width: 120px;
+        }
+        
+        .calendar-week {
+            display: flex;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .calendar-week:last-child {
+            border-bottom: none;
+            border-radius: 0 0 10px 10px;
+            overflow: hidden;
+        }
+        
+        .calendar-day {
+            flex: 1;
+            background: white;
+            min-height: 120px;
+            padding: 10px;
+            position: relative;
+            transition: all 0.3s ease;
+            border-right: 1px solid #e9ecef;
+            min-width: 120px;
+        }
+        
+        .calendar-day:last-child {
+            border-right: none;
+        }
+        
+        .calendar-day:hover {
+            background: #f8f9fa;
+            transform: scale(1.02);
+            z-index: 1;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .calendar-day.excluded {
+            background: #f8f9fa;
+            color: #6c757d;
+            opacity: 0.6;
+        }
+        
+        .date-number {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #495057;
+        }
+        
+        .task-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            margin-bottom: 4px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .task-item:hover {
+            transform: translateX(2px);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+        
+        .team-member {
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            min-height: 16px;
+        }
+        
+        .team-member[contenteditable="true"] {
+           
+            padding: 2px;
+            border-radius: 3px;
+            outline: none;
+            display: inline-block;
+        }
+        
+        .team-member[contenteditable="true"]:focus {
+            background-color: rgba(255,255,255,0.7);
+            box-shadow: 0 0 0 1px #667eea;
+        }
+        
+        .task-description {
+            font-size: 10px;
+            opacity: 0.9;
+            margin-top: 2px;
+            cursor: pointer;
+            min-height: 14px;
+        }
+        
+        .task-description[contenteditable="true"] {
+            
+            padding: 2px;
+            border-radius: 3px;
+            outline: none;
+        }
+        
+        .task-description[contenteditable="true"]:focus {
+            background-color: rgba(255,255,255,0.7);
+            box-shadow: 0 0 0 1px #667eea;
+        }
+        
+        .legend {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .legend h3 {
+            margin-bottom: 15px;
+            color: #495057;
+        }
+        
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        
+        .priyanka { background: linear-gradient(135deg, #ff6b6b, #ee5a24); }
+        .parvez { background: linear-gradient(135deg, #4ecdc4, #44a08d); }
+        .mushtaq { background: linear-gradient(135deg, #45b7d1, #96c93d); }
+        .shruti { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .rahul { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        
+        .stats {
+            padding: 20px 30px;
+            background: white;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        @media (max-width: 768px) {
+            .calendar-container {
+                margin: 15px;
+            }
+            
+            .calendar-day {
+                min-height: 100px;
+                padding: 8px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                justify-content: space-between;
+            }
+            
+            .calendar-header-cell, .calendar-day {
+                min-width: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Monthly Task Planner</h1>
+            <p>June 2025 - Team Task Distribution</p>
+        </div>
+        
+        <div class="controls">
+            <button class="btn" onclick="downloadCSV()">📥 Download CSV for Google Calendar</button>
+            <button class="btn" onclick="printPlanner()">🖨️ Print Planner</button>
+            <button class="btn" onclick="resetData()">🔄 Reset All Changes</button>
+            <div class="filter-group">
+                <label for="memberFilter">Filter by Team Member:</label>
+                <select id="memberFilter" onchange="filterTasks()">
+                    <option value="all">All Members</option>
+                    <option value="Priyanka">Priyanka</option>
+                    <option value="Parvez">Parvez</option>
+                    <option value="Mushtaq">Mushtaq</option>
+                    <option value="Shruti">Shruti</option>
+                    <option value="Rahul">Rahul</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="calendar-container">
+            <div class="calendar-header-row">
+                <div class="calendar-header-cell">Monday</div>
+                <div class="calendar-header-cell">Tuesday</div>
+                <div class="calendar-header-cell">Wednesday</div>
+                <div class="calendar-header-cell">Thursday</div>
+                <div class="calendar-header-cell">Friday</div>
+                <div class="calendar-header-cell">Saturday</div>
+                <div class="calendar-header-cell">Sunday</div>
+            </div>
+            <div id="calendar-content"></div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalDays">0</div>
+                <div class="stat-label">Working Days</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalTasks">0</div>
+                <div class="stat-label">Total Tasks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="uniqueMembers">5</div>
+                <div class="stat-label">Team Members</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="tasksPerMember">0</div>
+                <div class="stat-label">Tasks per Member</div>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <h3>Team Member Legend</h3>
+            <div class="legend-grid">
+                <div class="legend-item">
+                    <div class="legend-color priyanka"></div>
+                    <span><strong>Priyanka</strong> - Initial Posts & Engagement</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color parvez"></div>
+                    <span><strong>Parvez</strong> - Initial Posts & Engagement</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color mushtaq"></div>
+                    <span><strong>Mushtaq</strong> - Initial Posts & Engagement</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color shruti"></div>
+                    <span><strong>Shruti</strong> - Initial Posts & Engagement</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color rahul"></div>
+                    <span><strong>Rahul</strong> - Initial Posts & Engagement</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const teamMembers = ['Priyanka', 'Parvez', 'Mushtaq', 'Shruti', 'Rahul'];
+        const memberColors = {
+            'Priyanka': 'priyanka',
+            'Parvez': 'parvez',
+            'Mushtaq': 'mushtaq',
+            'Shruti': 'shruti',
+            'Rahul': 'rahul'
+        };
+        
+        let taskData = [];
+        let workingDays = 0;
+        let savedData = {
+            descriptions: {},
+            members: {}
+        };
+        
+        // Load saved data from server
+        async function loadSavedData() {
+            try {
+                const response = await fetch('/load');
+                if (response.ok) {
+                    return await response.json();
+                }
+                return { descriptions: {}, members: {} };
+            } catch (error) {
+                console.error('Error loading data:', error);
+                return { descriptions: {}, members: {} };
+            }
+        }
+        
+        // Save data to server
+        async function saveData() {
+            try {
+                const response = await fetch('/save', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(savedData)
+                });
+                
+                if (!response.ok) {
+                    console.error('Failed to save data');
+                }
+            } catch (error) {
+                console.error('Error saving data:', error);
+            }
+        }
+        
+        // Reset all saved data
+        async function resetData() {
+            if (confirm('Are you sure you want to reset all changes? This cannot be undone.')) {
+                savedData = { descriptions: {}, members: {} };
+                await saveData();
+                refreshCalendar();
+            }
+        }
+        
+        // Refresh the calendar view
+        function refreshCalendar() {
+            document.getElementById('calendar-content').innerHTML = '';
+            taskData = [];
+            workingDays = 0;
+            generateCalendar();
+        }
+        
+        // Generate a unique key for each task
+        function getTaskKey(date, member, taskType) {
+            return `${date}-${member}-${taskType}`;
+        }
+        
+        function isExcludedDate(date) {
+            const day = date.getDay();
+            const dateStr = date.getDate();
+            
+            if (day === 0) return true;
+            if (date.getFullYear() === 2025 && date.getMonth() === 5 && dateStr === 7) return true;
+            if (date.getFullYear() === 2025 && date.getMonth() === 5 && dateStr === 21) return true;
+            
+            return false;
+        }
+        
+        async function generateCalendar() {
+            savedData = await loadSavedData();
+            
+            const startDate = new Date(2025, 5, 4);
+            const endDate = new Date(2025, 5, 30);
+            const calendarContent = document.getElementById('calendar-content');
+            
+            const firstDay = new Date(startDate);
+            while (firstDay.getDay() !== 1) {
+                firstDay.setDate(firstDay.getDate() - 1);
+            }
+            
+            let currentDate = new Date(firstDay);
+            let memberIndex = 0;
+            
+            while (currentDate <= endDate || currentDate.getDay() !== 1) {
+                const weekDiv = document.createElement('div');
+                weekDiv.className = 'calendar-week';
+                
+                for (let i = 0; i < 7; i++) {
+                    const dateDiv = document.createElement('div');
+                    dateDiv.className = 'calendar-day';
+                    
+                    const isCurrentMonth = currentDate.getMonth() === 5;
+                    const isInRange = currentDate >= startDate && currentDate <= endDate;
+                    const isExcluded = isExcludedDate(currentDate);
+                    
+                    if (!isCurrentMonth || isExcluded || !isInRange) {
+                        dateDiv.classList.add('excluded');
+                    }
+                    
+                    const dateNumber = document.createElement('div');
+                    dateNumber.className = 'date-number';
+                    dateNumber.textContent = currentDate.getDate();
+                    dateDiv.appendChild(dateNumber);
+                    
+                    if (isCurrentMonth && isInRange && !isExcluded) {
+                        workingDays++;
+                        const defaultMember = teamMembers[memberIndex % teamMembers.length];
+                        const dateStr = currentDate.toISOString().split('T')[0];
+                        
+                        // Get saved member name or use default
+                        const memberKey = getTaskKey(dateStr, 'initial', 'member');
+                        const assignedMember = savedData.members[memberKey] || defaultMember;
+                        
+                        // Initial Posts Task
+                        const initialPostTask = document.createElement('div');
+                        initialPostTask.className = `task-item ${memberColors[assignedMember] || memberColors[defaultMember]}`;
+                        
+                        const initialPostKey = getTaskKey(dateStr, assignedMember, 'initial');
+                        const initialPostContent = savedData.descriptions[initialPostKey] || 
+                            'Initial Posts (Discord, Reddit, Quora, Forums)';
+                        
+                        initialPostTask.innerHTML = `
+                            <div class="team-member" contenteditable="true" 
+                                 data-task-key="${memberKey}">${assignedMember}</div>
+                            <div class="task-description" contenteditable="true" 
+                                 data-task-key="${initialPostKey}">${initialPostContent}</div>
+                        `;
+                        dateDiv.appendChild(initialPostTask);
+                        
+                        // Engagement Task
+                        const engagementTask = document.createElement('div');
+                        engagementTask.className = 'task-item';
+                        engagementTask.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+                        
+                        const engagementKey = getTaskKey(dateStr, 'all', 'engagement');
+                        const engagementContent = savedData.descriptions[engagementKey] || 
+                            'Reply, Like & Comment on Posts';
+                        
+                        engagementTask.innerHTML = `
+                            <div class="team-member">All Team</div>
+                            <div class="task-description" contenteditable="true" 
+                                 data-task-key="${engagementKey}">${engagementContent}</div>
+                        `;
+                        dateDiv.appendChild(engagementTask);
+                        
+                        taskData.push({
+                            date: dateStr,
+                            member: assignedMember,
+                            task: 'Initial Posts',
+                            description: initialPostContent,
+                            startTime: '09:00',
+                            endTime: '10:00'
+                        });
+                        
+                        taskData.push({
+                            date: dateStr,
+                            member: 'All Team Members',
+                            task: 'Engagement Activities',
+                            description: engagementContent,
+                            startTime: '10:00',
+                            endTime: '11:00'
+                        });
+                        
+                        memberIndex++;
+                    }
+                    
+                    weekDiv.appendChild(dateDiv);
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+                
+                calendarContent.appendChild(weekDiv);
+                
+                if (currentDate > endDate && currentDate.getDay() === 1) {
+                    break;
+                }
+            }
+            
+            setupEditableElements();
+            updateStats();
+        }
+        
+        function setupEditableElements() {
+            // Handle member name edits
+            const memberNames = document.querySelectorAll('.team-member[contenteditable="true"]');
+            memberNames.forEach(member => {
+                member.addEventListener('blur', async function() {
+                    const taskKey = this.getAttribute('data-task-key');
+                    const newName = this.textContent.trim();
+                    
+                    if (newName) {
+                        savedData.members[taskKey] = newName;
+                        await saveData();
+                        
+                        const taskItem = this.closest('.task-item');
+                        if (taskItem) {
+                            Object.values(memberColors).forEach(colorClass => {
+                                taskItem.classList.remove(colorClass);
+                            });
+                            if (teamMembers.includes(newName) && memberColors[newName]) {
+                                taskItem.classList.add(memberColors[newName]);
+                            } else {
+                                taskItem.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                            }
+                        }
+                        
+                        const date = taskKey.split('-')[0];
+                        taskData.forEach(task => {
+                            if (task.date === date && task.task === 'Initial Posts') {
+                                task.member = newName;
+                            }
+                        });
+                    } else {
+                        const originalName = teamMembers.find(member => 
+                            member === this.textContent.trim()) || teamMembers[0];
+                        this.textContent = originalName;
+                    }
+                });
+                
+                member.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.blur();
+                    }
+                });
+            });
+            
+            // Handle description edits
+            const descriptions = document.querySelectorAll('.task-description');
+            descriptions.forEach(desc => {
+                desc.addEventListener('blur', async function() {
+                    const taskKey = this.getAttribute('data-task-key');
+                    const newDescription = this.textContent.trim();
+                    
+                    if (newDescription) {
+                        savedData.descriptions[taskKey] = newDescription;
+                        await saveData();
+                        
+                        taskData.forEach(task => {
+                            if (taskKey.includes(task.date)) {
+                                task.description = newDescription;
+                            }
+                        });
+                    } else {
+                        const parts = taskKey.split('-');
+                        const taskType = parts[2];
+                        this.textContent = taskType === 'initial' ? 
+                            'Initial Posts (Discord, Reddit, Quora, Forums)' : 
+                            'Reply, Like & Comment on Posts';
+                    }
+                });
+                
+                desc.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.blur();
+                    }
+                });
+            });
+        }
+        
+        function updateStats() {
+            document.getElementById('totalDays').textContent = workingDays;
+            document.getElementById('totalTasks').textContent = taskData.length;
+            
+            const members = new Set();
+            Object.values(savedData.members).forEach(name => members.add(name));
+            teamMembers.forEach(name => members.add(name));
+            document.getElementById('uniqueMembers').textContent = members.size;
+            
+            document.getElementById('tasksPerMember').textContent = 
+                Math.ceil(workingDays / members.size);
+        }
+        
+        function filterTasks() {
+            const filter = document.getElementById('memberFilter').value;
+            const taskItems = document.querySelectorAll('.task-item');
+            
+            taskItems.forEach(item => {
+                const memberName = item.querySelector('.team-member').textContent;
+                if (filter === 'all' || memberName === filter || memberName === 'All Team') {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+        
+        function downloadCSV() {
+            let csv = 'Subject,Start Date,Start Time,End Date,End Time,Description,Location\n';
+            
+            taskData.forEach(task => {
+                const subject = `${task.task} - ${task.member}`;
+                const description = task.description.replace(/,/g, ';');
+                csv += `"${subject}","${task.date}","${task.startTime}","${task.date}","${task.endTime}","${description}","Office"\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'team_task_planner_june_2025.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+        
+        function printPlanner() {
+            window.print();
+        }
+        
+        // Initialize calendar on page load
+        generateCalendar();
+    </script>
+</body>
+</html>
